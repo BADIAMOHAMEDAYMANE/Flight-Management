@@ -89,18 +89,23 @@
     color: #777;
     vertical-align: top;
   }
-  
-  .viewMore {
-    margin-top: 20px;
-    text-align: right;
-  }
-  
-  .viewMore a {
-    color: #e91e63;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .viewMore a:hover {
-    text-decoration: underline;
-  }
+
+.viewMore button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.viewMore button:hover {
+  background-color: #0056b3;
+}
+
+.noMore {
+  margin-top: 10px;
+  color: #666;
+  font-style: italic;
+}
