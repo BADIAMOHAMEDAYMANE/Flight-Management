@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Navbar.module.css";
 import logoImage from "../assets/Avion.png";
-import { Menu, X, ChevronDown, User, LogIn } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogIn, MessageCircle } from "lucide-react"; // Added MessageCircle
 
-const Navbar = () => {
+const Navbar = ({ onAssistantClick }) => {  // Added prop
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeLink, setActiveLink] = useState('accueil');
@@ -26,6 +26,9 @@ const Navbar = () => {
     const handleLinkClick = (link) => {
         setActiveLink(link);
         setIsMenuOpen(false);
+        if (link === 'assistant') {
+            onAssistantClick(); // Trigger chatbot display
+        }
     };
 
     return (
@@ -83,6 +86,17 @@ const Navbar = () => {
                         onClick={() => handleLinkClick('contact')}
                     >
                         Contact
+                    </a>
+                </li>
+                {/* Only added this new item */}
+                <li>
+                    <a
+                        href="#"
+                        className={activeLink === 'assistant' ? styles.active : ''}
+                        onClick={() => handleLinkClick('assistant')}
+                    >
+                        <MessageCircle size={16} style={{ marginRight: '6px' }} />
+                        Assistant
                     </a>
                 </li>
             </ul>

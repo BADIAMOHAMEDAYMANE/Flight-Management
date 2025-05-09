@@ -8,7 +8,7 @@ const Photo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_KEY = "3b891a0d3562b8388f071fe2e76c1da4";
+  const API_KEY = "b75e1cef2e2b27b7107f56b5a5f0cf0c";
 
   const fetchFlights = async () => {
     try {
