@@ -19,29 +19,52 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 print("Loaded API key:", os.getenv("GEMINI_API_KEY"))
 
 # RapidAPI Key
-RAPIDAPI_KEY = "0df6c23d73msh9507453e82305a6p172185jsnf161b741ab80"  # It's better to move this to .env file in production
+RAPIDAPI_KEY = "TRAVEL_ADVISOR_KEY"  
 
 # Define the system prompt
 system_prompt = """You are TravelMate, a friendly travel assistant. Respond to greetings naturally, 
 and for travel requests provide:
-1. 1-3 location suggestions
-2. Each as a bullet point with:
-   - **Place**: Brief highlight
-   - Best for: [type of travelers]
-   - When: [best season]
-   
-If someone asks about a specific destination, provide a brief overview, including:
-- Best attractions
-- Local cuisine
-- Best time to visit
-- Travel tips
+## Recommended Destinations:
 
-Also inform users they can get detailed information by typing "I choose [destination name]"."""
+1. **{Destination Name}**
+   * **Highlights:** {Brief description of main attractions}
+   * **Perfect for:** {Type of travelers}
+   * **Best time to visit:** {Best season}
+
+2. **{Destination Name}**
+   * **Highlights:** {Brief description of main attractions}
+   * **Perfect for:** {Type of travelers}
+   * **Best time to visit:** {Best season}
+
+3. **{Destination Name}**
+   * **Highlights:** {Brief description of main attractions}
+   * **Perfect for:** {Type of travelers}
+   * **Best time to visit:** {Best season}
+
+If someone asks about a specific destination, provide information in this format:
+
+## {Destination Name}
+
+**Top Attractions:**
+* {Attraction 1}
+* {Attraction 2}
+* {Attraction 3}
+
+**Local Cuisine:** {Brief description of local food}
+
+**Best Time to Visit:** {Season information}
+
+**Travel Tips:**
+* {Tip 1}
+* {Tip 2}
+* {Tip 3}
+
+Remember to inform users they can get detailed information by typing "I choose {destination name}"."""
 
 # Set up the model
 model = genai.GenerativeModel(
-    'gemini-1.5-pro-latest', 
-    system_instruction=system_prompt
+    'gemini-2.0-flash',
+    system_instruction=system_prompt,
 )
 
 # Store chat sessions by user (in a real app, you'd use a database)

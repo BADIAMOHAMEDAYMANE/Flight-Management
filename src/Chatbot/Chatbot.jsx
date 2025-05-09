@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Chatbot.module.css';
+import ReactMarkdown from 'react-markdown';
 
 const Chatbot = ({ onClose, onDestinationSelect }) => {
     const [message, setMessage] = useState('');
@@ -76,6 +77,23 @@ const Chatbot = ({ onClose, onDestinationSelect }) => {
         }
     };
 
+    // Function to render message content with markdown support
+    const renderMessageContent = (text) => {
+        return (
+            <ReactMarkdown
+                components={{
+                    h2: ({node, ...props}) => <h2 className={styles.messageHeading} {...props} />,
+                    strong: ({node, ...props}) => <strong className={styles.messageHighlight} {...props} />,
+                    li: ({node, ...props}) => <li className={styles.messageListItem} {...props} />,
+                    ul: ({node, ...props}) => <ul className={styles.messageList} {...props} />,
+                    ol: ({node, ...props}) => <ol className={styles.messageOrderedList} {...props} />
+                }}
+            >
+                {text}
+            </ReactMarkdown>
+        );
+    };
+
     return (
         <div className={styles.chatbotContainer}>
             <div className={styles.chatHeader}>
@@ -97,7 +115,7 @@ const Chatbot = ({ onClose, onDestinationSelect }) => {
                             key={index} 
                             className={`${msg.sender === 'user' ? styles.userMessage : styles.botMessage} ${msg.isRedirect ? styles.redirectMessage : ''}`}
                         >
-                            {msg.text}
+                            {msg.sender === 'bot' ? renderMessageContent(msg.text) : msg.text}
                         </div>
                     ))
                 )}
