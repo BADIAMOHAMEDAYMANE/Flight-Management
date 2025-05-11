@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Chatbot.module.css';
+import ReactMarkdown from 'react-markdown';
 
-const Chatbot = ({ onClose }) => {
+const Chatbot = ({ onClose, onDestinationSelect }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,9 +19,34 @@ const Chatbot = ({ onClose }) => {
     const handleSendMessage = async () => {
         if (!message.trim() || isLoading) return;
 
+        // Check for "I choose [destination]" pattern
+        const choosePattern = /^I\s+choose\s+(.+)$/i;
+        const match = message.match(choosePattern);
+
         // Add user message to UI immediately
         setMessages(prev => [...prev, { text: message, sender: 'user' }]);
         setMessage('');
+        
+        // If it's a destination selection message
+        if (match) {
+            const destination = match[1].trim();
+            
+            // Add bot response confirming the destination selection
+            setMessages(prev => [...prev, { 
+                text: `Taking you to ${destination} details page...`, 
+                sender: 'bot',
+                isRedirect: true
+            }]);
+            
+            // Slight delay before redirect to show the confirmation message
+            setTimeout(() => {
+                onDestinationSelect(destination);
+            }, 1500);
+            
+            return;
+        }
+        
+        // Regular message handling
         setIsLoading(true);
 
         try {
@@ -51,6 +77,23 @@ const Chatbot = ({ onClose }) => {
         }
     };
 
+    // Function to render message content with markdown support
+    const renderMessageContent = (text) => {
+        return (
+            <ReactMarkdown
+                components={{
+                    h2: ({node, ...props}) => <h2 className={styles.messageHeading} {...props} />,
+                    strong: ({node, ...props}) => <strong className={styles.messageHighlight} {...props} />,
+                    li: ({node, ...props}) => <li className={styles.messageListItem} {...props} />,
+                    ul: ({node, ...props}) => <ul className={styles.messageList} {...props} />,
+                    ol: ({node, ...props}) => <ol className={styles.messageOrderedList} {...props} />
+                }}
+            >
+                {text}
+            </ReactMarkdown>
+        );
+    };
+
     return (
         <div className={styles.chatbotContainer}>
             <div className={styles.chatHeader}>
@@ -64,14 +107,15 @@ const Chatbot = ({ onClose }) => {
                 {messages.length === 0 ? (
                     <div className={styles.welcomeMessage}>
                         <p>Hello! I'm your travel assistant. Ask me about destinations, flights, or travel tips!</p>
+                        <p>To see detailed information about a destination, type <strong>"I choose [City or Country]"</strong></p>
                     </div>
                 ) : (
                     messages.map((msg, index) => (
                         <div 
                             key={index} 
-                            className={msg.sender === 'user' ? styles.userMessage : styles.botMessage}
+                            className={`${msg.sender === 'user' ? styles.userMessage : styles.botMessage} ${msg.isRedirect ? styles.redirectMessage : ''}`}
                         >
-                            {msg.text}
+                            {msg.sender === 'bot' ? renderMessageContent(msg.text) : msg.text}
                         </div>
                     ))
                 )}
