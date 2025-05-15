@@ -13,11 +13,11 @@ dist
 dist-ssr
 *.local
 
-# Python virtual environment
-venv/
+# Python virtual environment (inside backend)
+backend/venv/
 
-# Environment variables
-.env
+# Environment variables (inside backend)
+backend/.env
 
 # Editor directories and files
 .vscode/*
