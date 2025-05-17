@@ -1,0 +1,291 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .backButton {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+  }
+  
+  .backButton:hover {
+    background-color: #2980b9;
+  }
+  
+  h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .contentGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  @media (min-width: 768px) {
+    .contentGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .contentGrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .section h2 {
+    color: #3498db;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+  
+  /* Weather Styles */
+  .weatherCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .weatherMain {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .temperature {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .condition {
+    font-size: 18px;
+    color: #7f8c8d;
+  }
+  
+  .weatherDetails {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .weatherDetails p {
+    margin: 5px 0;
+    color: #7f8c8d;
+  }
+  
+  .forecast h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  .forecastItems {
+    display: flex;
+    justify-content: space-between;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .forecastDay {
+    text-align: center;
+    min-width: 60px;
+  }
+  
+  /* Flights Styles */
+  .flightsList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .flightCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .flightHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .airline {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .price {
+    font-weight: bold;
+    color: #16a085;
+  }
+  
+  .flightRoute {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .departure, .arrival {
+    text-align: center;
+  }
+  
+  .time {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .airport {
+    color: #7f8c8d;
+    font-size: 14px;
+  }
+  
+  .flightDuration {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 0 10px;
+  }
+  
+  .durationLine {
+    height: 2px;
+    background-color: #ddd;
+    position: relative;
+  }
+  
+  .durationLine::before, .durationLine::after {
+    content: '•';
+    position: absolute;
+    top: -8px;
+    color: #3498db;
+  }
+  
+  .durationLine::before {
+    left: 0;
+  }
+  
+  .durationLine::after {
+    right: 0;
+  }
+  
+  .duration {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #7f8c8d;
+  }
+  
+  /* Hotels Styles */
+  .accommodationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .hotelCard {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .hotelImage {
+    height: 150px;
+    overflow: hidden;
+  }
+  
+  .imagePlaceholder {
+    height: 100%;
+    background-color: #3498db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .hotelInfo {
+    padding: 15px;
+  }
+  
+  .hotelInfo h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .hotelRating {
+    color: #f39c12;
+    margin-bottom: 8px;
+  }
+  
+  .hotelLocation {
+    color: #7f8c8d;
+    margin-bottom: 8px;
+  }
+  
+  .hotelPrice {
+    font-weight: bold;
+    color: #16a085;
+    margin-bottom: 8px;
+  }
+  
+  .hotelAmenities {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+  
+  .loadingSpinner {
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin: 20px auto;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .error {
+    color: #e74c3c;
+    background-color: #fae2e0;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+  }

@@ -7,10 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependency directories
 node_modules
 dist
 dist-ssr
 *.local
+
+# Python virtual environment (inside backend)
+backend/venv/
+
+# Environment variables (inside backend)
+backend/.env
 
 # Editor directories and files
 .vscode/*
