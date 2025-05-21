@@ -1,6 +1,6 @@
 // Navbar.jsx
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logoImage from "../assets/logo.png";
 import { Menu, X, ChevronDown, User, LogIn, LogOut, MessageCircle } from "lucide-react";
@@ -55,59 +55,50 @@ const Navbar = ({ onAssistantClick }) => {
 
             <ul className={`${styles.links} ${isMenuOpen ? styles.open : ''}`}>
                 <li>
-                    <a
-                        href="#"
+                    <Link
                         className={activeLink === 'accueil' ? styles.active : ''}
-                        onClick={() => handleLinkClick('accueil')}
+                        to="/home"
+                        onClick={() => setActiveLink('accueil')}
                     >
                         Accueil
-                    </a>
+                    </Link>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        to="/home/destinations"
                         className={activeLink === 'destinations' ? styles.active : ''}
-                        onClick={() => handleLinkClick('destinations')}
+                        onClick={() => setActiveLink('destinations')}
                     >
                         Destinations
-                    </a>
+                    </Link>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        to="/home/vols"
                         className={activeLink === 'vols' ? styles.active : ''}
-                        onClick={() => handleLinkClick('vols')}
+                        onClick={() => setActiveLink('vols')}
                     >
                         Vols
-                    </a>
+                    </Link>
                 </li>
                 <li>
-                    <a
-                        href="#"
-                        className={activeLink === 'promos' ? styles.active : ''}
-                        onClick={() => handleLinkClick('promos')}
-                    >
-                        Promotions
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="#"
+                    <Link
+                        to="#footer"
                         className={activeLink === 'contact' ? styles.active : ''}
-                        onClick={() => handleLinkClick('contact')}
                     >
                         Contact
-                    </a>
+                    </Link>
                 </li>
                 <li>
-                    <a
-                        href="#"
+                    <Link
+                        to="/home/chatbot"
                         className={activeLink === 'assistant' ? styles.active : ''}
-                        onClick={() => handleLinkClick('assistant')}
+                        onClick={() => setActiveLink('assistant')}
+
                     >
                         <MessageCircle size={16} style={{ marginRight: '6px' }} />
                         Assistant
-                    </a>
+                    </Link>
                 </li>
             </ul>
 

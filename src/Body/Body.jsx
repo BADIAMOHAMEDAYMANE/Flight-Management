@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./Body.module.css";
 import madridImage from "../assets/Aymane.jpg";
 
-const Photo = () => {
+const Body = () => {
   const [destinations, setDestinations] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loading, setLoading] = useState(true);
@@ -136,4 +136,4 @@ const Photo = () => {
   );
 };
 
-export default Photo;
+export default Body;

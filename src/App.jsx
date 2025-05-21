@@ -1,64 +1,38 @@
-import React, { useState, useContext } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './Navbar/Navbar';
-import Footer from './Footer/Footer';
-import './App.module.css';
-import Flights from './Body/Body';
-import FlightDestinations from './TravelPlan/TravelPlan';
-import Chatbot from './Chatbot/Chatbot';
-import DestinationDetails from './DestinationDetails/DestinationDetails';
-import LoginPage from './Login/LoginPage';
-import { AuthContext } from './AuthContext';
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import Navbar from "./Navbar/Navbar";
+import Footer from "./Footer/Footer";
+import "./App.module.css";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "./AuthContext";
 
 function App() {
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [selectedDestination, setSelectedDestination] = useState(null);
+
+  const location = useLocation();
+
   const { user, isLoading } = useContext(AuthContext);
 
-  const handleDestinationSelect = (destination) => {
-    setSelectedDestination(destination);
-    setShowChatbot(false);
-  };
+  useEffect(() => {
+    if (location.hash === "#footer") {
+      const footer = document.getElementById("footer");
+      if (footer) {
+        footer.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
-  const handleBackFromDetails = () => {
-    setSelectedDestination(null);
-  };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if(isLoading) {
+    return <p>Loading ...</p>
   }
-
+  else if(!user) {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <div className="app">
-      {user ? (
-        <>
-          <Navbar onAssistantClick={() => setShowChatbot(true)} />
-
-          {selectedDestination ? (
-            <DestinationDetails 
-              destination={selectedDestination} 
-              onBack={handleBackFromDetails} 
-            />
-          ) : showChatbot ? (
-            <Chatbot 
-              onClose={() => setShowChatbot(false)} 
-              onDestinationSelect={handleDestinationSelect}
-            />
-          ) : (
-            <>
-              <FlightDestinations />
-              <Flights />
-            </>
-          )}
-
-          <Footer />
-        </>
-      ) : (
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      )}
+      <Navbar />
+      <Outlet />
+      <footer id="footer">
+        <Footer />
+      </footer>
     </div>
   );
 }

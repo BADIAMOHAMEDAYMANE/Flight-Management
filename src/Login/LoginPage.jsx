@@ -2,14 +2,14 @@
 import React, { useState, useContext } from 'react';
 import styles from './LoginPage.module.css';
 import { AuthContext } from '../AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Footer from '../Footer/Footer';
 import logoImage from '../assets/logo.PNG'; // Make sure to add your logo file
 
 const LoginPage = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState('');
-  const { login, register } = useContext(AuthContext);
+  const { login, register,user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,7 +31,7 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     if (login(loginEmail, loginPassword)) {
-      navigate('/');
+      navigate('/home');
     } else {
       setError('Invalid email or password');
     }
@@ -41,11 +41,15 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     if (register(registerName, registerEmail, registerPassword)) {
-      navigate('/');
+      navigate('/home');
     } else {
       setError('Email already registered');
     }
   };
+
+  if(user) {
+    return <Navigate to="/home" />
+  }
 
   return (
     <div className={styles.loginWrapper}>
