@@ -583,9 +583,9 @@ def format_budget_response(destination, budget_data):
     
     return response
 
-
+def get_destination_attractions(destination):
     """
-    Get specdef get_destination_attractions(destination):ific attractions and costs for a destination.
+    Get specific attractions and costs for a destination.
     
     Args:
         destination (str): Destination name
@@ -749,36 +749,6 @@ def fetch_hotels(destination):
     except Exception as e:
         print(f"Error fetching hotels: {e}")
         return []  # Return empty list on error
-# =============================================================================
-# TRAVEL API - DESTINATION DETAILS & BUDGET CALCULATOR
-# =============================================================================
-"""
-Comprehensive Travel Planning API
-
-This Flask application provides travel planning services including:
-- Destination weather forecasts and flight information
-- Hotel accommodations via Travel Advisor API integration
-- Dynamic budget calculations with multiple tiers
-- AI-powered realistic travel data generation
-- Session-based user preference management
-
-Dependencies:
-- Flask: Web framework for API endpoints
-- AI Model: For generating realistic travel data
-- Travel Advisor API: External hotel data source
-- JSON: Data serialization and API communication
-
-Author: Travel API Team
-Version: 1.0
-"""
-
-import json
-import random
-from datetime import datetime, timedelta
-from flask import Flask, request, jsonify
-
-# Initialize Flask application
-app = Flask(__name__)
 
 # =============================================================================
 # DESTINATION DETAILS ENDPOINT
@@ -787,90 +757,50 @@ app = Flask(__name__)
 @app.route('/api/destination-details', methods=['POST'])
 def destination_details():
     """
-    Comprehensive Destination Information Retrieval Endpoint
+    Retrieve comprehensive information about a specific destination.
     
-    This endpoint serves as the primary data aggregation service for travel planning.
-    It combines multiple data sources to provide a complete travel overview:
+    Provides weather, flights, accommodations, and budget information.
+    Uses AI to generate realistic data and integrates with Travel Advisor API for hotels.
     
-    Data Sources:
-    1. AI-generated weather and flight data (primary)
-    2. Travel Advisor API for real hotel information
-    3. Internal budget calculation system
-    4. Mock data fallback system
+    Request JSON:
+        - destination: Destination name
+        - sessionId: User session ID
     
-    Processing Flow:
-    1. Validate request and extract parameters
-    2. Fetch real hotel data from external API
-    3. Generate weather/flight data using AI
-    4. Calculate budget estimates based on user preferences
-    5. Aggregate all data into comprehensive response
-    6. Handle errors with fallback mechanisms
-    
-    Args:
-        JSON Request Body:
-            destination (str): Target destination name (required)
-            sessionId (str): User session identifier for preferences (optional)
-    
-    Returns:
-        JSON Response:
-            weather (dict): Current conditions and 5-day forecast
-            flights (list): Available flight options with pricing
-            accommodations (list): Hotel listings with details and amenities
-            budget (dict): Comprehensive budget breakdown
-    
-    Error Handling:
-        - 400: Missing destination parameter
-        - 500: Internal server errors with detailed logging
-        - Automatic fallback to mock data if AI service fails
-    
-    CORS Configuration:
-        - Allows all origins for development
-        - Supports POST method with Content-Type header
+    Response JSON:
+        - weather: Current weather and 5-day forecast
+        - flights: Available flights with pricing
+        - accommodations: Hotel listings with details
+        - budget: Budget breakdown for the destination
     """
     
     try:
-        # Configure CORS headers for cross-origin requests
-        # Note: In production, restrict origins to specific domains
         response_headers = {
-            "Access-Control-Allow-Origin": "*",  # Allow all origins (dev only)
-            "Access-Control-Allow-Methods": "POST",  # Only POST method allowed
-            "Access-Control-Allow-Headers": "Content-Type"  # Accept JSON content
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST",
+            "Access-Control-Allow-Headers": "Content-Type"
         }
         
-        # Extract and validate request parameters
         data = request.json
-        destination = data.get('destination', '')  # Primary destination parameter
-        session_id = data.get('sessionId', 'default')  # User session for preferences
+        destination = data.get('destination', '')
+        session_id = data.get('sessionId', 'default')
         
-        # Validate required parameters
         if not destination:
             return jsonify({"error": "No destination provided"}), 400
         
-        # =================================================================
-        # STEP 1: FETCH REAL HOTEL DATA
-        # =================================================================
-        # Integrate with Travel Advisor API for authentic accommodation data
-        # This provides real hotel names, ratings, and current pricing
+        # Get hotel data from Travel Advisor API
         hotels = fetch_hotels(destination)
         
-        # =================================================================
-        # STEP 2: RETRIEVE USER PREFERENCES
-        # =================================================================
-        # Get stored user preferences for personalized budget calculations
-        # Preferences include budget tier, accommodation type, activity preferences
+        # Get user preferences if available
         user_prefs = user_preferences.get(session_id, {})
         
-        # =================================================================
-        # STEP 3: AI-POWERED DATA GENERATION
-        # =================================================================
+        # Generate weather and flights data using AI
         try:
-            # Construct detailed prompt for AI model
-            # This prompt ensures structured, realistic data generation
+            # Create prompt for AI to generate realistic travel data
             prompt = f"""Generate realistic travel data for {destination} in JSON format with these sections:
             1. Weather information for {destination} with current conditions and 5-day forecast
             2. Three recommended flights to {destination} from major hubs
             
-            Format Requirements:
+            Format:
             {{
                 "weather": {{
                     "temperature": [current temperature in Celsius],
@@ -882,49 +812,36 @@ def destination_details():
                 "flights": [Array of 3 flights with airline, price, departure/arrival details]
             }}
             
-            Important: Return ONLY the JSON with no additional text or explanation.
-            Use realistic data appropriate for {destination}'s climate and geography."""
+            Return ONLY the JSON with no additional text or explanation."""
             
-            # Generate content using AI model
             response = model.generate_content(prompt)
+            
+            # Try to extract JSON from the response
             response_text = response.text
             
-            # =============================================================
-            # JSON EXTRACTION AND PARSING
-            # =============================================================
-            # Handle various response formats from AI model
-            # AI may return JSON wrapped in markdown code blocks
-            
+            # Handle potential markdown code block formatting
             if "```json" in response_text:
-                # Extract content from JSON markdown blocks
+                # Extract content between markdown code blocks
                 start = response_text.find("```json") + len("```json")
                 end = response_text.rfind("```")
                 json_content = response_text[start:end].strip()
             elif "```" in response_text:
-                # Extract content from generic code blocks
+                # Extract content between generic code blocks
                 start = response_text.find("```") + len("```")
                 end = response_text.rfind("```")
                 json_content = response_text[start:end].strip()
             else:
-                # Use response as-is if no code blocks detected
+                # Use the response as is
                 json_content = response_text
             
-            # Parse extracted JSON content
+            # Parse the JSON
             destination_data = json.loads(json_content)
             
-            # =============================================================
-            # DATA INTEGRATION AND ENRICHMENT
-            # =============================================================
-            
-            # Integrate real hotel data with AI-generated content
-            # Priority: Real API data > Mock data generator
+            # Add our real hotel data to the response
             destination_data["accommodations"] = hotels if hotels else generate_mock_accommodations(destination)
             
-            # Calculate comprehensive budget information
-            # Uses user preferences and destination-specific pricing
+            # Add budget information
             budget_info = calculate_travel_budget(destination, user_prefs)
-            
-            # Structure budget data for frontend consumption
             destination_data["budget"] = {
                 "daily_min": budget_info["daily_total"]["min"],
                 "daily_max": budget_info["daily_total"]["max"],
@@ -938,20 +855,14 @@ def destination_details():
             return jsonify(destination_data), 200, response_headers
             
         except Exception as e:
-            # =============================================================
-            # AI SERVICE FAILURE RECOVERY
-            # =============================================================
             print(f"Error getting AI generated data: {e}")
-            
-            # Fallback to deterministic mock data generation
-            # Ensures service availability even when AI model fails
+            # Fallback to static mock data
             mock_data = generate_mock_data(destination)
-            
             # Replace mock accommodations with real data if available
             if hotels:
                 mock_data["accommodations"] = hotels
                 
-            # Add budget information to mock data response
+            # Add budget information to mock data
             budget_info = calculate_travel_budget(destination, user_prefs)
             mock_data["budget"] = {
                 "daily_min": budget_info["daily_total"]["min"],
@@ -966,355 +877,189 @@ def destination_details():
             return jsonify(mock_data), 200, response_headers
         
     except Exception as e:
-        # =================================================================
-        # GLOBAL ERROR HANDLING
-        # =================================================================
-        print(f"Error in destination details: {e}")  # Log for debugging
+        print(f"Error in destination details: {e}")
         return jsonify({"error": str(e)}), 500, response_headers
-
-# =============================================================================
-# BUDGET CALCULATOR ENDPOINT
-# =============================================================================
 
 @app.route('/api/budget-calculator', methods=['POST'])
 def budget_calculator():
-    """
-    Advanced Travel Budget Calculator
-    
-    This endpoint provides detailed cost estimation for travel planning.
-    It considers multiple variables to generate accurate budget projections:
-    
-    Calculation Factors:
-    - Destination cost-of-living index
-    - Trip duration and number of travelers
-    - Budget tier (budget/mid-range/luxury)
-    - Seasonal price variations
-    - Transportation costs including flights
-    - Activity and attraction pricing
-    
-    Budget Categories:
-    1. Accommodation (per night, scaled by travelers)
-    2. Food & Dining (daily meals, local cuisine)
-    3. Activities & Attractions (entry fees, tours)
-    4. Local Transportation (public transit, taxis)
-    5. Flight Costs (round-trip, scaled by travelers)
-    
-    Args:
-        JSON Request Body:
-            destination (str): Target destination (required)
-            budgetLevel (str): Spending tier - "budget", "mid-range", "luxury"
-            duration (int): Trip length in days (default: 7)
-            travelers (int): Number of people traveling (default: 1)
-            sessionId (str): User session for preferences
-    
-    Returns:
-        JSON Response: Comprehensive budget breakdown with min/max ranges
-            for each category and total trip cost estimation
-    
-    Features:
-    - Dynamic pricing based on destination
-    - Multi-traveler cost scaling
-    - Flight cost estimation with regional adjustments
-    - Detailed category breakdown for planning
-    """
-    
     try:
-        # Configure CORS headers (consistent with other endpoints)
         response_headers = {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "POST",
             "Access-Control-Allow-Headers": "Content-Type"
         }
         
-        # =================================================================
-        # PARAMETER EXTRACTION AND VALIDATION
-        # =================================================================
         data = request.json
         destination = data.get('destination', '')
-        budget_level = data.get('budgetLevel', 'mid-range')  # Default to mid-range
-        duration = data.get('duration', 7)  # Default week-long trip
-        travelers = data.get('travelers', 1)  # Default single traveler
+        budget_level = data.get('budgetLevel', 'mid-range')
+        duration = data.get('duration', 7)
+        travelers = data.get('travelers', 1)
         session_id = data.get('sessionId', 'default')
         
-        # Validate required destination parameter
         if not destination:
             return jsonify({"error": "No destination provided"}), 400
         
-        # =================================================================
-        # USER PREFERENCE INTEGRATION
-        # =================================================================
-        # Retrieve and merge user preferences with request parameters
+        # Get user preferences if available
         user_prefs = user_preferences.get(session_id, {})
         
-        # Override stored preferences with explicit request parameters
+        # Override with provided budget level
         user_prefs["budget_level"] = budget_level
         
-        # =================================================================
-        # BASE BUDGET CALCULATION
-        # =================================================================
-        # Calculate foundational budget using destination-specific data
-        # This function considers local cost-of-living and price indices
+        # Calculate base budget
         budget_info = calculate_travel_budget(destination, user_prefs)
         
-        # Extract daily cost estimates
+        # Calculate total trip cost
         daily_min = budget_info["daily_total"]["min"]
         daily_max = budget_info["daily_total"]["max"]
         
-        # =================================================================
-        # MULTI-TRAVELER SCALING
-        # =================================================================
-        # Scale daily costs based on number of travelers
-        # Some costs (accommodation) may have economies of scale
+        # Account for number of travelers
         daily_min *= travelers
         daily_max *= travelers
         
-        # Calculate total trip cost based on duration
+        # Calculate trip totals
         trip_min = daily_min * duration
         trip_max = daily_max * duration
         
-        # =================================================================
-        # FLIGHT COST ESTIMATION
-        # =================================================================
-        # Flight costs vary significantly by budget tier and destination
-        # These estimates are based on average market rates
+        # Add flight estimates (simplified)
         flight_costs = {
-            "budget": {"min": 300, "max": 600},      # Economy, budget airlines
-            "mid-range": {"min": 600, "max": 1200},  # Major carriers, some flexibility
-            "luxury": {"min": 1200, "max": 3000}     # Premium economy/business class
+            "budget": {"min": 300, "max": 600},
+            "mid-range": {"min": 600, "max": 1200},
+            "luxury": {"min": 1200, "max": 3000}
         }
         
-        # Get flight cost range for selected budget tier
         flight_cost = flight_costs[budget_level]
         flight_total_min = flight_cost["min"] * travelers
         flight_total_max = flight_cost["max"] * travelers
         
-        # =================================================================
-        # DESTINATION-SPECIFIC FLIGHT ADJUSTMENTS
-        # =================================================================
-        # Adjust flight costs based on destination distance and market factors
-        # Multipliers based on average flight costs from major hubs
+        # Adjust flight costs based on destination
         cost_multipliers = {
-            "paris": 1.2,        # European destination, moderate premium
-            "london": 1.2,       # UK, similar to Paris pricing
-            "new york": 1.0,     # Domestic US baseline
-            "tokyo": 1.5,        # Long-haul Asia, higher fuel costs
-            "dubai": 1.3,        # Middle East, competitive but distant
-            "sydney": 1.8,       # Longest routes, highest fuel costs
-            "bangkok": 1.4,      # Southeast Asia, growing market
+            "paris": 1.2,
+            "london": 1.2,
+            "new york": 1.0,
+            "tokyo": 1.5,
+            "dubai": 1.3,
+            "sydney": 1.8,
+            "bangkok": 1.4,
         }
         
-        # Apply destination multiplier (default 1.0 for unlisted destinations)
         mult = cost_multipliers.get(destination.lower(), 1.0)
         flight_total_min = int(flight_total_min * mult)
         flight_total_max = int(flight_total_max * mult)
         
-        # =================================================================
-        # RESPONSE ASSEMBLY
-        # =================================================================
-        # Construct comprehensive budget response with all categories
+        # Prepare the response
         budget_response = {
-            # Trip metadata
             "destination": destination,
             "duration": duration,
             "travelers": travelers,
             "budgetLevel": budget_level,
-            
-            # Daily cost breakdown
             "dailyCost": {
                 "min": daily_min,
                 "max": daily_max
             },
-            
-            # Accommodation costs (per night, total for trip)
             "accommodation": {
                 "min": budget_info["accommodation"]["min"] * travelers,
                 "max": budget_info["accommodation"]["max"] * travelers,
                 "total": budget_info["accommodation"]["min"] * travelers * duration
             },
-            
-            # Food and dining costs
             "food": {
                 "min": budget_info["food"]["min"] * travelers,
                 "max": budget_info["food"]["max"] * travelers,
                 "total": budget_info["food"]["min"] * travelers * duration
             },
-            
-            # Activities and attractions
             "activities": {
                 "min": budget_info["activities"]["min"] * travelers,
                 "max": budget_info["activities"]["max"] * travelers,
                 "total": budget_info["activities"]["min"] * travelers * duration
             },
-            
-            # Local transportation (buses, taxis, metro)
             "transportation": {
                 "min": budget_info["transport"]["min"] * travelers,
                 "max": budget_info["transport"]["max"] * travelers,
                 "total": budget_info["transport"]["min"] * travelers * duration
             },
-            
-            # Flight costs (round-trip)
             "flights": {
                 "min": flight_total_min,
                 "max": flight_total_max
             },
-            
-            # Grand total including all categories
             "totalCost": {
                 "min": trip_min + flight_total_min,
                 "max": trip_max + flight_total_max
             },
-            
-            # Specific attractions with individual pricing
             "attractions": budget_info.get("specific_attractions", [])
         }
         
         return jsonify(budget_response), 200, response_headers
         
     except Exception as e:
-        # Global error handling with detailed logging
         print(f"Error in budget calculator: {e}")
         return jsonify({"error": str(e)}), 500, response_headers
 
-# =============================================================================
-# UTILITY FUNCTIONS
-# =============================================================================
-
 def generate_mock_accommodations(destination):
-    """
-    Mock Hotel Data Generator
-    
-    Generates realistic hotel data for testing and fallback scenarios.
-    Used when Travel Advisor API is unavailable or returns no results.
-    
-    Args:
-        destination (str): Target destination for contextual naming
-    
-    Returns:
-        list: Array of mock hotel objects with realistic attributes
-    
-    Features:
-    - Contextual hotel naming based on destination
-    - Varied price ranges and star ratings
-    - Realistic amenity combinations
-    - Random but believable location descriptions
-    """
-    
-    # Hotel naming components for realistic generation
+    """Generate mock accommodations data for testing"""
     hotel_prefixes = ["Grand", "Royal", "Luxury", "Premium", "Comfort", "Imperial"]
     hotel_types = ["Hotel", "Resort", "Suites", "Inn", "Lodge", "Apartments"]
-    
-    # Common hotel amenities for random selection
-    amenities_list = [
-        "Free WiFi", "Pool", "Spa", "Restaurant", "Bar", 
-        "Gym", "Parking", "Room Service", "Concierge", "Business Center"
-    ]
+    amenities_list = ["Free WiFi", "Pool", "Spa", "Restaurant", "Bar", "Gym", "Parking", "Room Service"]
     
     accommodations = []
-    
-    # Generate 3 mock hotels with varied characteristics
     for i in range(3):
-        # Create contextual hotel name
         hotel_name = f"{random.choice(hotel_prefixes)} {destination} {random.choice(hotel_types)}"
-        
         accommodations.append({
             "name": hotel_name,
-            "rating": random.randint(3, 5),  # 3-5 star rating
-            "price": f"${random.randint(80, 500)}",  # Varied price range
+            "rating": random.randint(3, 5),
+            "price": f"${random.randint(80, 500)}",
             "location": f"{random.choice(['Downtown', 'Central', 'Historic District', 'Beachfront', 'City Center'])} {destination}",
-            "amenities": random.sample(amenities_list, random.randint(3, 6))  # 3-6 random amenities
+            "amenities": random.sample(amenities_list, random.randint(3, 6))
         })
     
     return accommodations
 
 def generate_mock_data(destination):
-    """
-    Comprehensive Mock Travel Data Generator
+    """Generate mock travel data for testing when AI generation fails"""
     
-    Creates realistic travel data when AI service is unavailable.
-    Ensures service continuity and testing capability.
-    
-    Args:
-        destination (str): Target destination for contextual data
-    
-    Returns:
-        dict: Complete travel data structure matching AI-generated format
-    
-    Generated Data:
-    - Weather: Current conditions and 5-day forecast
-    - Flights: 3 flight options with realistic scheduling
-    - Accommodations: Hotel listings via separate function
-    
-    Algorithm:
-    - Uses current date for realistic forecast dates
-    - Randomizes within realistic ranges for each data type
-    - Maintains consistent data structure with AI responses
-    """
-    
-    # Use current date for realistic forecast generation
+    # Current date for realistic data
     today = datetime.now()
     
-    # =================================================================
-    # WEATHER DATA GENERATION
-    # =================================================================
-    # Generate realistic weather data with seasonal considerations
+    # Mock weather data
     weather = {
-        "temperature": random.randint(15, 30),  # Celsius, temperate range
-        "condition": random.choice([
-            "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"
-        ]),
-        "humidity": random.randint(40, 90),  # Percentage
-        "wind": random.randint(5, 20),  # km/h
+        "temperature": random.randint(15, 30),
+        "condition": random.choice(["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"]),
+        "humidity": random.randint(40, 90),
+        "wind": random.randint(5, 20),
         "forecast": []
     }
     
-    # Generate 5-day forecast with day-by-day variation
+    # Generate 5-day forecast
     for i in range(5):
         day_date = today + timedelta(days=i+1)
         weather["forecast"].append({
-            "day": day_date.strftime("%a"),  # Abbreviated day name
+            "day": day_date.strftime("%a"),
             "temperature": random.randint(15, 30),
-            "condition": random.choice([
-                "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"
-            ])
+            "condition": random.choice(["Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Clear"])
         })
     
-    # =================================================================
-    # FLIGHT DATA GENERATION
-    # =================================================================
-    # Realistic airline and airport data for flight generation
+    # Mock flights data
     airlines = ["Air Travel", "SkyWings", "Global Air", "FastJet", "StarFlight"]
     airports = ["JFK", "LAX", "LHR", "CDG", "DXB", "SIN", "SYD", "HND"]
     
     flights = []
-    
-    # Generate 3 flight options with varied characteristics
     for i in range(3):
-        # Random departure time during business hours
         departure_time = f"{random.randint(6, 22):02d}:{random.choice(['00', '15', '30', '45'])}"
-        
-        # Realistic flight duration (1-14 hours)
         duration_hours = random.randint(1, 14)
         
-        # Calculate arrival time based on duration
         departure_dt = datetime.strptime(departure_time, "%H:%M")
         arrival_dt = departure_dt + timedelta(hours=duration_hours)
         arrival_time = arrival_dt.strftime("%H:%M")
         
         flights.append({
             "airline": random.choice(airlines),
-            "price": random.randint(200, 1500),  # USD range
+            "price": random.randint(200, 1500),
             "departureTime": departure_time,
             "arrivalTime": arrival_time,
             "duration": f"{duration_hours}h {random.choice(['00', '15', '30', '45'])}m",
             "departureAirport": random.choice(airports),
-            "arrivalAirport": f"{destination[:3].upper()}"  # Destination airport code
+            "arrivalAirport": f"{destination[:3].upper()}"
         })
     
-    # =================================================================
-    # DATA ASSEMBLY
-    # =================================================================
-    # Use dedicated function for accommodation generation
+    # Use the separate function for accommodations
     accommodations = generate_mock_accommodations(destination)
     
     return {
@@ -1323,23 +1068,5 @@ def generate_mock_data(destination):
         "accommodations": accommodations
     }
 
-# =============================================================================
-# APPLICATION ENTRY POINT
-# =============================================================================
-
 if __name__ == '__main__':
-    """
-    Flask Application Initialization
-    
-    Development server configuration:
-    - Debug mode enabled for development
-    - Port 5000 for local testing
-    - Hot reload on code changes
-    
-    Production Deployment Notes:
-    - Disable debug mode in production
-    - Use proper WSGI server (Gunicorn, uWSGI)
-    - Configure environment variables for API keys
-    - Implement proper logging and monitoring
-    """
     app.run(debug=True, port=5000)
