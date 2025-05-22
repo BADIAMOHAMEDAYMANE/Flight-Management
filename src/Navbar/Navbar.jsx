@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from "react";
+// Navbar.jsx
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import logoImage from "../assets/Avion.png";
-import { Menu, X, ChevronDown, User, LogIn, MessageCircle } from "lucide-react"; // Added MessageCircle
+import logoImage from "../assets/logo.png";
+import { Menu, X, ChevronDown, User, LogIn, LogOut, MessageCircle } from "lucide-react";
+import { AuthContext } from "../AuthContext";
 
-const Navbar = ({ onAssistantClick }) => {  // Added prop
+const Navbar = ({ onAssistantClick }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeLink, setActiveLink] = useState('accueil');
+    const { user, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     // Gestion du défilement pour la transparence de la navbar
     useEffect(() => {
@@ -31,15 +36,21 @@ const Navbar = ({ onAssistantClick }) => {  // Added prop
         }
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+        setIsMenuOpen(false);
+    };
+
     return (
         <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
-            <div className={styles.logoContainer}>
+            <div className={styles.logoContainer} onClick={() => navigate('/')}>
                 <img
                     src={logoImage}
                     alt="Logo de l'application"
                     className={styles.logo}
                 />
-                <span className={styles.logoText}>Air Voyage</span>
+                <span className={styles.logoText}>TravelMate</span>
             </div>
 
             <ul className={`${styles.links} ${isMenuOpen ? styles.open : ''}`}>
@@ -88,7 +99,6 @@ const Navbar = ({ onAssistantClick }) => {  // Added prop
                         Contact
                     </a>
                 </li>
-                {/* Only added this new item */}
                 <li>
                     <a
                         href="#"
@@ -102,11 +112,43 @@ const Navbar = ({ onAssistantClick }) => {  // Added prop
             </ul>
 
             <div className={styles.buttons}>
-                <button className={styles.signInButton}>
-                    <LogIn size={16} style={{ marginRight: '4px' }} />
-                    Connexion
-                </button>
-                <button className={styles.signUpButton}>Inscription</button>
+                {user ? (
+                    <>
+                        <div className={styles.userInfo}>
+                            <User size={16} style={{ marginRight: '6px' }} />
+                            <span>{user.name}</span>
+                        </div>
+                        <button 
+                            className={styles.signInButton} 
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={16} style={{ marginRight: '4px' }} />
+                            Déconnexion
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button 
+                            className={styles.signInButton}
+                            onClick={() => {
+                                navigate('/login');
+                                setIsMenuOpen(false);
+                            }}
+                        >
+                            <LogIn size={16} style={{ marginRight: '4px' }} />
+                            Connexion
+                        </button>
+                        <button 
+                            className={styles.signUpButton}
+                            onClick={() => {
+                                navigate('/login?tab=register');
+                                setIsMenuOpen(false);
+                            }}
+                        >
+                            Inscription
+                        </button>
+                    </>
+                )}
             </div>
 
             <button

@@ -1,13 +1,12 @@
 .footer {
-  background-color: #1e293b; /* Arrière-plan sombre moderne */
-  padding: 3rem 0 2rem;
+  background-color: #1e293b;
+  padding: 3rem 0 1rem;
   color: #e2e8f0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
   overflow: hidden;
 }
 
-/* Effet graphique de fond */
 .footer::before {
   content: '';
   position: absolute;
@@ -25,6 +24,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  gap: 2rem;
 }
 
 .footerSection {
@@ -32,11 +32,24 @@
   min-width: 250px;
   margin-bottom: 2rem;
   padding: 0 1rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.footerSection:first-child {
-  border-left: none;
+.logoContainer {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.footerLogo {
+  max-width: 180px;
+  margin-bottom: 0.5rem;
+  filter: brightness(0) invert(1);
+}
+
+.tagline {
+  color: #60a5fa;
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-top: 0;
 }
 
 .footerTitle {
@@ -48,7 +61,6 @@
   padding-bottom: 10px;
 }
 
-/* Ligne décorative sous les titres */
 .footerTitle::after {
   content: '';
   position: absolute;
@@ -64,6 +76,25 @@
   line-height: 1.8;
   color: #cbd5e1;
   font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.contactIcon {
+  color: #60a5fa;
 }
 
 .footerLinks {
@@ -87,6 +118,7 @@
   transition: color 0.3s;
   display: flex;
   align-items: center;
+  font-size: 0.95rem;
 }
 
 .footerLinks a::before {
@@ -103,8 +135,8 @@
 
 .socialIcons {
   display: flex;
-  gap: 1.2rem;
-  margin-top: 1rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .socialLink {
@@ -124,46 +156,116 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Couleurs spécifiques pour chaque réseau social au survol */
 .socialLink:nth-child(1):hover {
-  background-color: #e1306c; /* Instagram */
+  background-color: #e1306c;
   color: white;
 }
 
 .socialLink:nth-child(2):hover {
-  background-color: #1877f2; /* Facebook */
+  background-color: #1877f2;
   color: white;
 }
 
 .socialLink:nth-child(3):hover {
-  background-color: #0a66c2; /* LinkedIn */
+  background-color: #1da1f2;
   color: white;
+}
+
+.socialLink:nth-child(4):hover {
+  background-color: #ea4335;
+  color: white;
+}
+
+.newsletter {
+  margin-top: 1.5rem;
+}
+
+.newsletterTitle {
+  font-size: 1rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.newsletterText {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletterInput {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  background-color: #1e293b;
+  color: white;
+}
+
+.newsletterButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.newsletterButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .footerCopyright {
   text-align: center;
-  padding-top: 2rem;
+  padding: 1.5rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 1rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
+  margin-top: 2rem;
 }
 
-/* Media queries pour la responsivité */
+.copyrightContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.copyrightContainer p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.paymentMethods {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.paymentIcon {
+  font-size: 1.2rem;
+}
+
 @media (max-width: 768px) {
   .footerSection {
     min-width: 100%;
-    border-left: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .footerSection:last-child {
     border-bottom: none;
+  }
+
+  .copyrightContainer {
+    flex-direction: column;
+    gap: 1rem;
   }
 }
