@@ -1,4 +1,26 @@
-flask
-python-dotenv
-flask-cors
-google-generativeai
+
+# Core Flask framework
+Flask==2.3.3
+
+# Cross-Origin Resource Sharing for frontend integration
+flask-cors==4.0.0
+
+# Google's Generative AI (Gemini) for natural language processing
+google-generativeai==0.7.2
+
+# Environment variable management
+python-dotenv==1.0.0
+
+# HTTP requests for external APIs (Travel Advisor API)
+requests==2.31.0
+
+# JSON handling (built-in with Python, no need to install)
+# json
+
+# Random number generation (built-in with Python)
+# random
+
+# Date and time handling (built-in with Python)
+# datetime
+
+# Operating system 
