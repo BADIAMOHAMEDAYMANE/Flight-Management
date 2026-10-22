@@ -14,7 +14,7 @@ class Config:
     
     # API Keys
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-    RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "TRAVEL_ADVISOR_KEY")
+    RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY") or os.getenv("TRAVEL_ADVISOR_KEY")
     
     # AI Model settings
     GEMINI_MODEL = "gemini-2.0-flash"
@@ -37,5 +37,5 @@ class Config:
         if not cls.GEMINI_API_KEY:
             raise ValueError("GEMINI_API_KEY is required")
         
-        print(f"Loaded API key: {cls.GEMINI_API_KEY}")
+        print("Gemini API key configured:", bool(cls.GEMINI_API_KEY))
         return True
