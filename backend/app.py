@@ -12,7 +12,7 @@ CORS(app)  # Enable CORS for all routes
 
 # Configure Google Generative AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-print("Loaded API key:", os.getenv("GEMINI_API_KEY"))
+print("Gemini API key configured:", bool(os.getenv("GEMINI_API_KEY")))
 
 
 # Define the system prompt

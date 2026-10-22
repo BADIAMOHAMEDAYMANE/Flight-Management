@@ -8,7 +8,7 @@ const Photo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_KEY = "b75e1cef2e2b27b7107f56b5a5f0cf0c";
+  const API_KEY = import.meta.env.VITE_AVIATIONSTACK_KEY;
 
   const fetchFlights = async () => {
     try {
